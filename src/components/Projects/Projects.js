@@ -2,7 +2,6 @@ import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import ProjectCard from "./ProjectCards";
 import Particle from "../Particle";
-import editor from "../../Assets/Projects/codeEditor.png";
 import chatify from "../../Assets/Projects/chatify.png";
 import bitsOfCode from "../../Assets/Projects/blog.png";
 
@@ -33,20 +32,10 @@ function Projects() {
             <ProjectCard
               imgPath={bitsOfCode}
               isBlog={false}
-              title="Online Complaint Registration And Management System"
-              description="A web-based Complaint Management System that allows users to register and track complaints, while admins can manage and resolve them. Built using Node.js, Express, and MongoDB, enabling efficient handling of complaint data with a backend API for database operations."
-              ghLink="https://github.com/Adityajamdade1/MY-Project"
-              demoLink="https://github.com/Adityajamdade1/MY-Project/blob/main/Video.mp4"
-            />
-          </Col>
-
-          <Col md={4} className="project-card">
-            <ProjectCard
-              imgPath={editor}
-              isBlog={false}
-              title="Tic-Tac-Toe-Game"
-              description="Interactive Tic-Tac-Toe game developed using HTML, CSS, and JavaScript — featuring responsive UI, real-time win detection, and reset functionality."
-              ghLink="https://github.com/Adityajamdade1/Tic-Tac-Toe-Game"
+              title="Portfolio website"
+              description="Full Stack Developer skilled in React, Node.js, Express, MongoDB, and MySQL.
+                I build responsive web applications with clean UI, efficient backend logic, and real-world functionality."
+              ghLink="https://github.com/sejal88944/portfolio.git"
             />
           </Col>
         </Row>
