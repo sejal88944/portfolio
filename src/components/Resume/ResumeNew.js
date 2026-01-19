@@ -17,7 +17,6 @@ function ResumeNew() {
   const [width, setWidth] = useState(1200);
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1); // Track current page
-  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,7 +34,6 @@ function ResumeNew() {
   const onDocumentLoadSuccess = ({ numPages }) => {
     console.log(`PDF loaded with ${numPages} pages`);
     setNumPages(numPages);
-    setTotalPages(numPages);
     setLoading(false);
   };
 
