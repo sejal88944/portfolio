@@ -37,20 +37,8 @@ function ResumeNew() {
     setLoading(false);
   };
 
-  const goToNextPage = () => {
-    if (pageNumber < numPages) {
-      setPageNumber(prev => prev + 1);
-    }
-  };
 
-  const goToPreviousPage = () => {
-    if (pageNumber > 1) {
-      setPageNumber(prev => prev - 1);
-    }
-  };
-
-  const isLastPage = pageNumber >= (numPages || 0);
-
+  
   const onDocumentLoadError = (error) => {
     console.error('Error while loading PDF:', error);
     setError('Failed to load PDF. Please try again later.');
