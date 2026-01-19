@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Spinner, Alert } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import Particle from "../Particle";
 import { AiOutlineDownload } from "react-icons/ai";
 import { Document, Page, pdfjs } from "react-pdf";
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import Particle from "../Particle";
 
-const pdf = "/documents/sejal-wattamwar-resume.pdf";
+// Path to the PDF file in the public directory
+const pdfPath = "/cv_sejal wattamwar.pdf";
 
 // Initialize PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -15,15 +16,15 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 function ResumeNew() {
   const [width, setWidth] = useState(1200);
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1); // Current page number
-  const [isLastPage, setIsLastPage] = useState(false);
+  const [pageNumber, setPageNumber] = useState(1); // Track current page
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [pdfUrl, setPdfUrl] = useState('/sejal wattamwar(8446218623).pdf');
+
+  // Direct download link to the PDF file
+  const downloadUrl = process.env.PUBLIC_URL + '/cv_sejal wattamwar.pdf';
 
   useEffect(() => {
-    // Add timestamp to prevent caching
-    setPdfUrl(`/sejal wattamwar(8446218623).pdf?t=${Date.now()}`);
     // Handle window resize
     const handleResize = () => setWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
@@ -32,10 +33,25 @@ function ResumeNew() {
   }, []);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
+    console.log(`PDF loaded with ${numPages} pages`);
     setNumPages(numPages);
+    setTotalPages(numPages);
     setLoading(false);
-    setIsLastPage(pageNumber >= numPages);
   };
+
+  const goToNextPage = () => {
+    if (pageNumber < numPages) {
+      setPageNumber(prev => prev + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (pageNumber > 1) {
+      setPageNumber(prev => prev - 1);
+    }
+  };
+
+  const isLastPage = pageNumber >= (numPages || 0);
 
   const onDocumentLoadError = (error) => {
     console.error('Error while loading PDF:', error);
@@ -64,11 +80,7 @@ function ResumeNew() {
           )}
 
           <Document
-            file={pdfUrl}
-            onError={(error) => {
-              console.error('PDF error:', error);
-              setError(`Failed to load PDF. Please check if the file exists at: ${pdfUrl}`);
-            }}
+            file={pdfPath}
             onLoadSuccess={onDocumentLoadSuccess}
             onLoadError={onDocumentLoadError}
             loading={
@@ -80,60 +92,58 @@ function ResumeNew() {
             }
             error={
               <Alert variant="danger" className="w-75 mx-auto">
-                Failed to load PDF. Please try again later.
+                Failed to load PDF. Please make sure the file exists at: {pdfPath}
               </Alert>
             }
             className="pdf-document"
           >
-            <Page 
-              pageNumber={pageNumber} 
-              width={width > 786 ? width * 0.7 : width * 0.9}
-              renderTextLayer={false}
-              renderAnnotationLayer={true}
-              onLoadSuccess={() => {
-                setIsLastPage(pageNumber >= numPages);
-              }}
-            />
-          </Document>
-        </Row>
-
-        <Row className="mt-4 justify-content-center">
-          <div className="text-center">
-            <Button
-              variant="primary"
-              href={pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mb-3"
-              style={{ width: '250px' }}
-            >
-              <AiOutlineDownload className="me-2" />
-              Download CV
-            </Button>
-            {numPages > 1 && (
-              <div className="d-flex justify-content-center align-items-center gap-3 mt-2">
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  onClick={() => setPageNumber(prev => Math.max(prev - 1, 1))}
-                  disabled={pageNumber <= 1}
-                >
-                  Previous
-                </Button>
-                <span className="text-muted">
-                  Page {pageNumber} of {numPages}
-                </span>
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  onClick={() => setPageNumber(prev => Math.min(prev + 1, numPages))}
-                  disabled={isLastPage}
-                >
-                  Next
-                </Button>
+            <div style={{ 
+              position: 'relative',
+              minHeight: '500px',
+              display: 'flex',
+              justifyContent: 'center',
+              margin: '0 auto',
+              maxWidth: width > 786 ? '70%' : '100%'
+            }}>
+              <div key={`page-${pageNumber}`}>
+                <Page 
+                  pageNumber={pageNumber}
+                  width={width > 786 ? Math.min(width * 0.7, 1000) : width * 0.95}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={true}
+                  loading={
+                    <div className="text-center my-5">
+                      <Spinner animation="border" variant="primary" />
+                      <p>Loading page {pageNumber}...</p>
+                    </div>
+                  }
+                />
+                {numPages > 1 && (
+                  <div className="d-flex justify-content-center align-items-center gap-3 mt-3">
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => setPageNumber(p => Math.max(1, p - 1))}
+                      disabled={pageNumber <= 1}
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-muted">
+                      Page {pageNumber} of {numPages}
+                    </span>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => setPageNumber(p => Math.min(numPages, p + 1))}
+                      disabled={pageNumber >= numPages}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          </Document>
         </Row>
       </Container>
     </div>
