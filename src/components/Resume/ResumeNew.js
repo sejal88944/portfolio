@@ -105,7 +105,20 @@ function ResumeNew() {
               margin: '0 auto',
               maxWidth: width > 786 ? '70%' : '100%'
             }}>
-              <div key={`page-${pageNumber}`}>
+              {/* Download Button */}
+            <div className="text-center mb-3">
+              <a
+                href={downloadUrl}
+                download="cv_sejal wattamwar.pdf"
+                className="btn btn-primary"
+                style={{ minWidth: '200px' }}
+              >
+                <AiOutlineDownload className="me-2" />
+                Download PDF
+              </a>
+            </div>
+
+            <div key={`page-${pageNumber}`}>
                 <Page 
                   pageNumber={pageNumber}
                   width={width > 786 ? Math.min(width * 0.7, 1000) : width * 0.95}
